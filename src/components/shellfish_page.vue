@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-3">
+      <div class="col-sm-3 min-width-map-column" style="height: 250px; width: 250px">
           <SingleSiteMap v-if="site_feature.length"
                          style="height: 250px; width: 250px"
                          :p_site_feature="site_feature"></SingleSiteMap>
@@ -337,10 +337,10 @@ export default {
 }
 </script>
 <style scoped>
-.advisory_icon {
-  height: 25px;
-  width: 25px;
+.min-width-map-column {
+    min-width: 250px;
 }
+
 
 .page-background {
   background-color: #FFFFFF;

@@ -75,22 +75,22 @@
                             </ol-geom-point>
                             <ol-style :overrideStyleFunction="overrideStyleFunction"></ol-style>
                         </ol-feature>
-
-                        <ol-style :overrideStyleFunction="overrideStyleFunction"></ol-style>
                     </ol-source-vector>
                 </ol-vector-layer>
                 <ol-interaction-select ref="site_interaction"
-                                       @select="getPopupComponent"
-                                       :filter="filter_click"
-                                       :condition="selectSingleClick"
+                                       @select="feature_select"
                                        :features="selectedFeatures">
                     <!--
-                    <div>
-                        <div :is="getPopupComponent(feature)" v-bind:feature="feature"></div>
-                    </div>
+                    <ol-overlay v-for="selected_feature in selectedFeatures.getArray()" :key="selected_feature.id">
                     -->
-                </ol-interaction-select>
-                <!--:layers="['sites']-->
+                    <ol-overlay v-if="show_popup"
+                                :position="popup_position">
+                        <div>
+                           <component :is="getPopupComponent(current_selected_feature)" v-bind:feature="current_selected_feature"></component>
+                        </div>
+                            </ol-overlay>
+                        </ol-interaction-select>
+                        <!--:layers="['sites']-->
 
 
         </ol-map>
@@ -128,47 +128,48 @@
 </template>
 
 <script>
-    import Vue from 'vue'
-    //import 'bootstrap/dist/css/bootstrap.min.css'
+    import app from 'vue'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     import 'typeface-montserrat/index.css'
 
-    import Map from "vue3-openlayers"
-    import TileLayer from "vue3-openlayers"
-    import OsmSource from "vue3-openlayers"
-    import Geoloc from "vue3-openlayers"
-    import VectorLayer from "vue3-openlayers"
-    import VectorSource from "vue3-openlayers"
-    import XyzSource from "vue3-openlayers"
-    import FillStyle from "vue3-openlayers"
-    import StrokeStyle from "vue3-openlayers"
-    import StyleBox from "vue3-openlayers"
-    import CircleStyle from "vue3-openlayers"
-    import Overlay from "vue3-openlayers"
-    import SelectInteraction from "vue3-openlayers"
-    import Style from "vue3-openlayers"
-    Vue.use(Map);
-    Vue.use(TileLayer);
-    Vue.use(OsmSource);
-    Vue.use(Geoloc);
-    Vue.use(VectorLayer);
-    Vue.use(VectorSource);
-    Vue.use(XyzSource);
-    Vue.use(StyleBox);
-    Vue.use(FillStyle);
-    Vue.use(StrokeStyle);
-    Vue.use(CircleStyle);
-    Vue.use(Overlay);
-    Vue.use(SelectInteraction);
-    Vue.use(Style);
+    /*
+        import Map from "vue3-openlayers"
+        import TileLayer from "vue3-openlayers"
+        import OsmSource from "vue3-openlayers"
+        import Geoloc from "vue3-openlayers"
+        import VectorLayer from "vue3-openlayers"
+        import VectorSource from "vue3-openlayers"
+        import XyzSource from "vue3-openlayers"
+        import FillStyle from "vue3-openlayers"
+        import StrokeStyle from "vue3-openlayers"
+        import StyleBox from "vue3-openlayers"
+        import CircleStyle from "vue3-openlayers"
+        import Overlay from "vue3-openlayers"
+        import SelectInteraction from "vue3-openlayers"
 
+        app.use(Map);
+        app.use(TileLayer);
+        app.use(OsmSource);
+        app.use(Geoloc);
+        app.use(VectorLayer);
+        app.use(VectorSource);
+        app.use(XyzSource);
+        app.use(StyleBox);
+        app.use(FillStyle);
+        app.use(StrokeStyle);
+        app.use(CircleStyle);
+        app.use(Overlay);
+        app.use(SelectInteraction);
+    */
+    import OpenLayersMap from "vue3-openlayers";
+    app.use(OpenLayersMap);
     import "vue3-openlayers/dist/vue3-openlayers.css";
 
     import { SidebarPlugin, ButtonPlugin, ButtonGroupPlugin, LayoutPlugin } from 'bootstrap-vue';
-    Vue.use(ButtonPlugin);
-    Vue.use(ButtonGroupPlugin);
-    Vue.use(LayoutPlugin);
-    Vue.use(SidebarPlugin);
+    app.use(ButtonPlugin);
+    app.use(ButtonGroupPlugin);
+    app.use(LayoutPlugin);
+    app.use(SidebarPlugin);
 
     import DataAPI from "../utilities/rest_api";
     import FeatureUtils from "../utilities/feature_funcs";
@@ -180,9 +181,10 @@
     import IconsLegend from "@/components/icons_legend";
 
     import Icon from 'ol/style/Icon';
-    import GeoJSON from 'ol/format/GeoJSON';
+    //import GeoJSON from 'ol/format/GeoJSON';
     import Collection from 'ol/Collection';
-    import singleClick from 'ol/events/condition';
+    //import singleClick from 'ol/events/condition';
+    import Style from 'ol/style/Style';
 
     //SInce these are not in the template, we import them here. We use them in the javascript below when
     //determining which icon to use.
@@ -221,8 +223,8 @@
                 current_layer_name: "Satellite",
                 xyz_layer_visible: true,
                 osm_layer_visible: false,
+                current_selected_feature: undefined,
                 selectedFeatures: new Collection(),
-                selectSingleClick: singleClick,
                 advisory_limits: undefined,
                 nowcastActive: true,
                 advisoryActive: false,
@@ -316,7 +318,17 @@
             window.removeEventListener("resize", this.resizeHandler);
         },
         methods: {
-
+            feature_select(feature) {
+                this.current_selected_feature = undefined;
+                if(feature.selected.length) {
+                    console.debug("getFeature called. Feature selected: " + feature.selected[0].getProperties().id);
+                    this.current_selected_feature = feature.selected[0].getProperties();
+                }
+                else {
+                    console.debug("getFeature called. No feature selected.");
+                }
+            },
+            /*
             get_sites()
             {
                 console.debug("get_sites called");
@@ -378,14 +390,17 @@
                     });
                 }
             },
-            site_clicked(evt) {
+            */
+            site_clicked(evt, layer) {
                 evt;
+                layer;
                 console.debug("site_clicked called");
 
             },
-            filter_click(feature) {
+            filter_click(feature, layer) {
+                layer;
                 console.debug("filter_click called");
-                return feature.values_;
+                return true;
 
             },
             resizeHandler() {
@@ -601,8 +616,7 @@
             This allows us to dynamically choose the popup to use based on the site_type field.
             */
 
-            getPopupComponent(event) {
-                let feature = event.selected[0].values_;
+            getPopupComponent(feature) {
                 if(feature !== undefined) {
                     if (feature.properties.site_type == "Water Quality") {
                         let name = 'StationPage';
@@ -616,8 +630,8 @@
                             }
                         });
 
-                        //return(WQPopup);
-                    } else if (feature.properties.site_type == "Shellfish") {
+                    }
+                    else if (feature.properties.site_type == "Shellfish") {
                         EventUtils.log_event(this.$gtag, 'click', 'Shellfish Station', feature.properties.description, 0);
                         this.$router.push({
                             name: 'ShellfishPage',
@@ -628,20 +642,52 @@
                             }
                         });
 
-                    } else if (feature.properties.site_type == "Beach Ambassador") {
+                    }
+                    else if (feature.properties.site_type == "Beach Ambassador") {
                         return (BCRSPopup);
-                    } else if (feature.properties.site_type == "Shellcast") {
+                    }
+                    else if (feature.properties.site_type == "Shellcast") {
                         return (ShellcastPopup);
-                    } else if (feature.properties.site_type == "Camera Site") {
+                    }
+                    else if (feature.properties.site_type == "Camera Site") {
                         return (CameraPopupBasic);
                     }
-
-
                 }
             }
-
         },
         computed: {
+            show_popup: function() {
+                let show = false;
+                /*
+                if(this.selectedFeatures.getLength()) {
+                    show = true;
+                }
+                */
+                if(this.current_selected_feature !== undefined) {
+                    return true;
+                }
+                console.debug("show_popup " + show + ".");
+                return(show);
+            },
+            /*
+            current_clicked_feature: function() {
+                let feature = undefined;
+                if(this.selectedFeatures.getLength()) {
+                    feature = this.selectedFeatures.item(0).getProperties();
+                }
+                return(feature);
+            },
+            */
+            popup_position: function() {
+                let coords = [0,0];
+                //if(this.selectedFeatures.getLength()) {
+                if(this.current_selected_feature !== undefined) {
+                    //let feature = this.selectedFeatures.item(0).getProperties();
+                    coords = this.current_selected_feature.geometry.flatCoordinates;
+                }
+                console.debug("popup_position: " + coords);
+                return(coords);
+            },
             featureStylingCompleted: function() {
                 if(this.features.length > 0 && (this.features_styled == this.features.length))
                 {
@@ -650,10 +696,20 @@
                 }
                 console.debug("featureStylingCompleted styled: " + this.features_styled + " features.");
                 return(false);
+            },
+            getSelectedFeatures: function() {
+                console.debug("getSelectedFeatures called.");
+                return([]);
             }
         },
         watch: {
-
+            /*
+            "current_selected_feature": function() {
+                if(this.current_selected_feature !== undefined) {
+                    this.getPopupComponent(this.current_selected_feature);
+                }
+            }
+             */
             /*
             features: _.debounce(function() {
                 this.$refs.site_map.$map.updateSize();

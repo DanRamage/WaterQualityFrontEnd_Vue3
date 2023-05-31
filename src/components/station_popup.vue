@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-3 min-width-map-column">
+      <div class="col-sm-3 min-width-map-column" style="height: 250px; width: 250px">
           <SingleSiteMap v-if="site_feature !== undefined"
                          style="height: 250px; width: 250px"
                          :p_site_feature="site_feature"></SingleSiteMap>
