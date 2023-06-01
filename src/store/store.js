@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import AdvisoryLimits from '../utilities/limits' // eslint-disable-line no-unused-vars
 
-export const store = createStore({
+const store = createStore({
     state: {
         advisory_limits: new AdvisoryLimits(),
         site_name: '',  //The location of the area we are looking at, Charleston, Myrtle Beach, ....
@@ -38,3 +38,5 @@ export const store = createStore({
     actions: {
     }
 });
+
+export default store;

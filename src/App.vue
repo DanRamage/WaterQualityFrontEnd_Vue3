@@ -17,7 +17,7 @@
     export default {
       data() {
         return {
-          activeComponent: 'SplashPage'
+          activeComponent: ''
         }
       },
       methods:

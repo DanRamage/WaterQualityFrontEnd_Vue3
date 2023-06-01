@@ -4,11 +4,11 @@ import StationGraph from '@/components/station_graph'
 import CameraGraph from '@/components/camera_graph'
 import ErrorPage from '@/components/error_page'
 import AboutPage from '@/components/about_page'
-import MyrtleBeachAboutPage from "@/components/MyrtleBeachAbout"
 import StationPage from '@/components/station_popup'
 import ShellfishPage from '@/components/shellfish_page'
 
-const routes = [
+import { createRouter, createWebHistory } from 'vue-router';
+export const routes = [
         {
             path: '/',
             name: 'SplashPage',
@@ -53,11 +53,6 @@ const routes = [
 
         },
         {
-            path: '/About/MyrtleBeach',
-            name: 'MyrtleBeachAboutPage',
-            component: MyrtleBeachAboutPage
-        },
-        {
             path: '/page error',
             name: '404',
             component: ErrorPage
@@ -65,4 +60,11 @@ const routes = [
 
     ];
 
-export default routes
+//export default routes
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes
+});
+
+export default router;

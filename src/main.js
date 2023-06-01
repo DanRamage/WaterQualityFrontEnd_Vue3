@@ -1,18 +1,13 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import { createRouter, createWebHistory } from 'vue-router';
-import { store } from './store/store';
-import routes from './router/routes';
+import router from '@/router/routes';
+import store from "@/store/store";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import 'typeface-montserrat/index.css';
 import VueGtag from 'vue-gtag-next';
 
 const app = createApp(App);
-const router = createRouter({
-  history: createWebHistory(),
-  routes: routes
-});
 
 app.use(router);
 app.use(store);
@@ -24,6 +19,10 @@ app.use(VueGtag, {
 app.component('App', App);
 app.mount('#app');
 
+router.beforeEach((to, from, next) => {
+  console.log(`Navigating to: ${to.name}`);
+  next();
+});
 /*import Vue from 'vue'
 Vue.config.devtools = true;
 import App from './App'

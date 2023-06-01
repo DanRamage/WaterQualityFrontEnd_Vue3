@@ -12,24 +12,36 @@
                     swimming advisories, but provide estimates of the likelihood that bacteria conditions
                     would warrant issuing an advisory if sampling were conducted that day.
                 </p>
-                <b-button class="btn-outline-primary p-2 mr-2" v-bind:class="[nowcastActive ? 'active' : '']"
-                          variant="outline-primary"
-                          v-on:click="dataTypeClick('nowcast')"><b>Nowcast</b></b-button>
-                <b-button class="btn-outline-primary p-2 ml-2" v-bind:class="[advisoryActive ? 'active' : '']"
-                          variant="outline-primary"
-                          v-on:click="dataTypeClick('advisory')"><b>Advisory</b></b-button>
+                <button type='button'
+                        class="btn btn-outline-primary p-2 mr-2" :class="nowcastActive ? 'active' : ''"
+                          v-on:click="dataTypeClick('nowcast')"><b>Nowcast</b></button>
+                <button type='button'
+                        class="btn btn-outline-primary p-2 ml-2" :class="advisoryActive ? 'active' : ''"
+                          v-on:click="dataTypeClick('advisory')"><b>Advisory</b></button>
 
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle layer_dropdown mt-4" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        {{current_layer_name}}
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" @click="layerSelected($event, 'openstreetmap', '')">Open Street Map</a></li>
+                        <li><a class="dropdown-item" @click="layerSelected($event, 'google', 'm')">Road</a></li>
+                        <li><a class="dropdown-item" @click="layerSelected($event, 'google', 's')">Satellite</a></li>
+                        <li><a class="dropdown-item" @click="layerSelected($event, 'google', 'y')">Hybrid Satellite</a></li>
+                        <li><a class="dropdown-item" @click="layerSelected($event, 'google', 'p')">Hybrid Terrain</a></li>
+                    </ul>
+
+                </div>
+                <!--
                 <b-dropdown id="layer_dropdown" class="layer_dropdown mt-4" :text="current_layer_name">
                     <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'openstreetmap', '')">Open Street Map</b-dropdown-item>
                     <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 'm')">Road</b-dropdown-item>
                     <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 's')">Satellite</b-dropdown-item>
                     <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 'y')">Hybrid Satellite</b-dropdown-item>
                     <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 'p')">Hybrid Terrain</b-dropdown-item>
-                    <!--
-                    <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 'r')">Altered Road</b-dropdown-item>
-                    <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 't')">Terrain</b-dropdown-item>
-                    -->
                 </b-dropdown>
+                -->
                 <br>
                 <p class="text-center mt-4">
                     <a href="" class="text-white card-link">Bacteria Sources</a>
@@ -51,16 +63,15 @@
                          :rotation="rotation"
                          projection="EPSG:4326">
                 </ol-view>
-                <ol-tile-layer :visible="xyz_layer_visible">
+                <ol-tile-layer ref="google_layer">
                     <ol-source-xyz :url="current_layer_url"/>
                 </ol-tile-layer>
-                <ol-tile-layer :visible="osm_layer_visible">
-                    <ol-source-osm></ol-source-osm>
+                <ol-tile-layer ref="osm_layer">
+                    <ol-source-osm />
                 </ol-tile-layer>
 
                 <ol-vector-layer ref="sites_vector_layer">
-                    <ol-source-vector ref="sites_vector_source"
-                                      >
+                    <ol-source-vector ref="sites_vector_source">
                         <ol-feature v-for="feature in features"
                                     :key="feature.id"
                                     :properties="{  id: feature.id,
@@ -128,9 +139,10 @@
 </template>
 
 <script>
-    import app from 'vue'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import 'typeface-montserrat/index.css'
+    import app from 'vue';
+    import "bootstrap";
+    import 'bootstrap-vue/dist/bootstrap-vue.css';
+    import 'typeface-montserrat/index.css';
 
     /*
         import Map from "vue3-openlayers"
@@ -165,12 +177,13 @@
     app.use(OpenLayersMap);
     import "vue3-openlayers/dist/vue3-openlayers.css";
 
+    /*
     import { SidebarPlugin, ButtonPlugin, ButtonGroupPlugin, LayoutPlugin } from 'bootstrap-vue';
     app.use(ButtonPlugin);
     app.use(ButtonGroupPlugin);
     app.use(LayoutPlugin);
     app.use(SidebarPlugin);
-
+    */
     import DataAPI from "../utilities/rest_api";
     import FeatureUtils from "../utilities/feature_funcs";
     import BCRSPopup from "./bcrs_popup";
@@ -584,12 +597,12 @@
                 {
                     this.nowcastActive = true;
                     this.advisoryActive = false;
-                    this.$refs.site_vector_layer.$source.changed();
+                    //this.$refs.site_vector_layer.$source.changed();
                 }
                 else{
                     this.nowcastActive = false;
                     this.advisoryActive = true;
-                    this.$refs.site_vector_layer.$source.changed();
+                    //this.$refs.site_vector_layer.$source.changed();
                 }
             },
             sidebarButtonClick() {
@@ -600,16 +613,21 @@
             layerSelected(event, layer_type, layer_selected) {
                 //Set the name of the current layer selected in dropdown.
                 this.current_layer_name = event.target.text;
-                this.osm_layer_visible = false;
-                this.xyz_layer_visible = false;
+                console.debug("layerSelected " + this.current_layer_name + " " + layer_type + " " + layer_selected);
+                this.$refs.osm_layer.tileLayer.setVisible(false);
+                this.$refs.google_layer.tileLayer.setVisible(false);
                 if(layer_type === 'google') {
-                    this.xyz_layer_visible = true;
+                    this.osm_layer_visible = false;
                     //Build the URL for the XYZ google layer.
                     this.current_google_layer = layer_selected;
                     this.current_layer_url = `https://mt0.google.com/vt/lyrs=${this.current_google_layer}&hl=en&x={x}&y={y}&z={z}`;
+                    this.xyz_layer_visible = true;
+                    this.$refs.google_layer.tileLayer.setVisible(true);
                 }
                 else if(layer_type == 'openstreetmap') {
+                    this.xyz_layer_visible = false;
                     this.osm_layer_visible = true;
+                    this.$refs.osm_layer.tileLayer.setVisible(true);
                 }
             },
             /*
