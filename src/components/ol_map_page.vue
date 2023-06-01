@@ -33,15 +33,6 @@
                     </ul>
 
                 </div>
-                <!--
-                <b-dropdown id="layer_dropdown" class="layer_dropdown mt-4" :text="current_layer_name">
-                    <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'openstreetmap', '')">Open Street Map</b-dropdown-item>
-                    <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 'm')">Road</b-dropdown-item>
-                    <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 's')">Satellite</b-dropdown-item>
-                    <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 'y')">Hybrid Satellite</b-dropdown-item>
-                    <b-dropdown-item class="dropdown-item" @click="layerSelected($event, 'google', 'p')">Hybrid Terrain</b-dropdown-item>
-                </b-dropdown>
-                -->
                 <br>
                 <p class="text-center mt-4">
                     <a href="" class="text-white card-link">Bacteria Sources</a>
@@ -91,9 +82,6 @@
                 <ol-interaction-select ref="site_interaction"
                                        @select="feature_select"
                                        :features="selectedFeatures">
-                    <!--
-                    <ol-overlay v-for="selected_feature in selectedFeatures.getArray()" :key="selected_feature.id">
-                    -->
                     <ol-overlay v-if="show_popup"
                                 :position="popup_position">
                         <div>
@@ -101,7 +89,6 @@
                         </div>
                             </ol-overlay>
                         </ol-interaction-select>
-                        <!--:layers="['sites']-->
 
 
         </ol-map>
@@ -177,13 +164,6 @@
     app.use(OpenLayersMap);
     import "vue3-openlayers/dist/vue3-openlayers.css";
 
-    /*
-    import { SidebarPlugin, ButtonPlugin, ButtonGroupPlugin, LayoutPlugin } from 'bootstrap-vue';
-    app.use(ButtonPlugin);
-    app.use(ButtonGroupPlugin);
-    app.use(LayoutPlugin);
-    app.use(SidebarPlugin);
-    */
     import DataAPI from "../utilities/rest_api";
     import FeatureUtils from "../utilities/feature_funcs";
     import BCRSPopup from "./bcrs_popup";
