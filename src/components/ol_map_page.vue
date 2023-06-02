@@ -178,6 +178,7 @@
     import Collection from 'ol/Collection';
     //import singleClick from 'ol/events/condition';
     import Style from 'ol/style/Style';
+    import {fromExtent} from 'ol/geom/Polygon';
 
     //SInce these are not in the template, we import them here. We use them in the javascript below when
     //determining which icon to use.
@@ -256,6 +257,9 @@
 
 
             this.current_layer_url = `https://mt0.google.com/vt/lyrs=${this.current_google_layer}&hl=en&x={x}&y={y}&z={z}`;
+            this.$refs.osm_layer.tileLayer.setVisible(false);
+            this.$refs.google_layer.tileLayer.setVisible(true);
+
             let path = window.location.pathname;
             if (path.length) {
                 let location_site_name = this.$store.state.site_name;
@@ -273,8 +277,13 @@
 
                     setTimeout(function() {
                         if(vm.$refs.sites_vector_layer !== null) {
+                            //Get the extents for our vector features. We then create a polygon from the extent and scale
+                            //it up by 20% to make sure all our features are in the map view amd not just peaking through
+                            //at the edges.
                             let feature_extent = vm.$refs.sites_vector_source.source.getExtent();
-                            vm.$refs.site_view.fit(feature_extent);
+                            let extent_poly = fromExtent(feature_extent);
+                            extent_poly.scale(1.2);
+                            vm.$refs.site_view.fit(extent_poly, vm.$refs.site_map.map.getSize());
                         }
                     }, 100);
                 })
@@ -384,18 +393,6 @@
                 }
             },
             */
-            site_clicked(evt, layer) {
-                evt;
-                layer;
-                console.debug("site_clicked called");
-
-            },
-            filter_click(feature, layer) {
-                layer;
-                console.debug("filter_click called");
-                return true;
-
-            },
             resizeHandler() {
 
                 for (var i = 0; i < this.mqSelectors.length; i++) {
