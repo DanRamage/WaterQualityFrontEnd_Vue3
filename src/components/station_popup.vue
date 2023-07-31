@@ -191,7 +191,9 @@
         <div v-if="site_feature !== undefined">
           <NWSAlerts :latitude="site_latitude"
                      :longitude="site_longitude"
-                     :post_code="site_post_code">
+                     :p_post_code="site_post_code"
+                     :p_usgs_site="usgs_site_id"
+                     :p_usgs_site_parameters="usgs_site_parameters">
 
           </NWSAlerts>
         </div>
