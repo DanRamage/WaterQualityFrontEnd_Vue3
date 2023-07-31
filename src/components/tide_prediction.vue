@@ -37,7 +37,7 @@ export default {
     {
       //"2022-03-25 01:53"
       let formatted_date = moment(tide_rec.t);
-      return(formatted_date.format("hh:MM A"));
+      return(formatted_date.format("hh:mm A"));
 
     },
     format_tide_type(tide_rec) {
