@@ -45,7 +45,7 @@ const store = createStore({
             try {
                 let zipcode = data['zipcode'];
                 let uv_index = data['index'];
-                console.debug("setUVIndex for zipcode: " + zipcode);
+                console.debug("setUVIndex cached data for zipcode: " + zipcode);
                 state.uv_index_cache.put(zipcode, uv_index);
             }
             catch(e) {
@@ -56,7 +56,7 @@ const store = createStore({
             try {
                 let station = station_data['station'];
                 let data = station_data['data'];
-                console.debug("setStationData for station: " + station);
+                console.debug("setStationData cached data for station: " + station);
                 state.observing_stations_cache.put(station, data);
             }
             catch(e) {
@@ -68,12 +68,12 @@ const store = createStore({
 
     getters: {
         getUVIndex: (state) => (zipcode) => {
-            console.debug("getUVIndex for zipcode: " + zipcode);
+            console.debug("getUVIndex cached data for zipcode: " + zipcode);
             let uv_index = undefined;
             try {
                 uv_index = state.uv_index_cache.get(zipcode);
                 if(uv_index == undefined) {
-                    console.debug("getUVIndex no UV index stored for zipcode: " + zipcode);
+                    console.debug("getUVIndex no UV index cached data for zipcode: " + zipcode);
                 }
 
             }
@@ -81,14 +81,14 @@ const store = createStore({
                 console.error(e);
             }
             return(uv_index);
-    },
+        },
         getObservingStationData: (state) => (station_name) => {
-            console.debug("getObservingStationData for station: " + station_name);
+            console.debug("getObservingStationData cached data for station: " + station_name);
             let station_data = undefined;
             try {
                 station_data = state.observing_stations_cache.get(station_name);
                 if(station_data == undefined) {
-                    console.debug("getObservingStationData no data stored for station: " + station_name);
+                    console.debug("getObservingStationData no data cached data for station: " + station_name);
                 }
 
             }
