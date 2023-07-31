@@ -86,7 +86,15 @@
       props: {
         'longitude': {type: Number, default: undefined},
         'latitude': {type: Number, default: undefined},
-        'post_code': {type: String, default: undefined}
+        //The postal code of the sampling site. This is used to get the UV Index.
+        'p_post_code': {type: String, default: undefined},
+        //Flag that specifies whether we get the tide data. For inland projects, we aren't
+        //going to be doing this.
+        'p_query_tide_data': {type: Boolean, default: false},
+        //Flag that specifies whether we get the rip current data. For inland projects, we aren't
+        //going to be doing this.
+        'p_add_rip_current_info': {type: Boolean, default: false},
+
       },
     components: {
       RipCurrentModal,
@@ -105,8 +113,9 @@
         nws_alerts: [],
         forecast_record: undefined,
         point_information: undefined,
-        closet_obs_station: undefined,
+        closest_obs_station: undefined,
         latest_obs_data: undefined,
+        post_code: undefined,
         show_uv_index_modal: false,
         uv_index_data: undefined,
         current_uv_index: undefined,
@@ -122,19 +131,24 @@
     mounted() {
       let vm = this;
       console.debug("NWSAlertsPage mounted.");
+
+      this.post_code = this.p_post_code;
       /*
       We do the point query to get the links for the forecast and observation links for the grid.
       */
       NWSApi.GetNWSPointInformation(this.latitude, this.longitude).then(point_info => {
         if(point_info != undefined)
         {
-          vm.point_information = point_info
+          vm.point_information = point_info;
           NWSApi.GetObservingStationsforGrid(vm.point_information.observationStations).then(station_list => {
-            vm.closet_obs_station = station_list.features[0];
-            NWSApi.GetNWSStationLatestObservations({station_code: vm.closet_obs_station.properties.stationIdentifier})
+            vm.closest_obs_station = station_list.features[0];
+            //Let's see if we have this station saved.
+            let nws_station_data = vm.$store.getters.getObservingStationData(vm.closest_obs_station.properties.stationIdentifier);
+            if(nws_station_data == undefined) {
+              NWSApi.GetNWSStationLatestObservations({station_code: vm.closest_obs_station.properties.stationIdentifier})
                 .then(obs_data => {
                   vm.latest_obs_data = obs_data;
-                })
+                  });
             vm.forecast_record = undefined;
             NWSApi.GetNWSForecast({url:vm.point_information.forecast}).then(forecast => {
               if(forecast != undefined)
@@ -142,8 +156,11 @@
                 if('properties' in forecast)
                 {
                   vm.forecast_record = forecast.properties;
-                }
-                else {
+                    //Let's store all this in the timed cache
+                    let data_payload = {observation_data: vm.latest_obs_data, forecast_data: vm.forecast_record};
+                    vm.$store.commit('setObservingStationData',
+                        {station: vm.closest_obs_station.properties.stationIdentifier, data: data_payload})
+                  } else {
                   if ('status' in forecast) {
                     console.error("Status: " + forecast.status + " " + forecast.detail);
                   }
@@ -171,8 +188,14 @@
                 console.error(error);
               }
             });
+            }
+            //WE have the data cached, so let's set our variables.
+            else {
+              vm.latest_obs_data = nws_station_data['observation_data'];
+              vm.forecast_record = nws_station_data['forecast_data'];
+            }
 
-            })
+          });
         }
         else {
           console.error("GetNWSPointInformation returned undefined.")
@@ -242,13 +265,22 @@
         vm.surf_alert_details = '';
         DataAPI.error_handler('GetNWSActiveAlerts', error);
       });
-      NWSApi.EPAGetUVIndex({post_code: this.post_code}).then(uv_index => {
+
+      let uv_index = this.$store.getters.getUVIndex(this.post_code);
+      if(uv_index == undefined) {
+        NWSApi.EPAGetUVIndex({post_code: this.post_code}).then(uv_index => {
+          vm.uv_index_data = uv_index;
+            vm.$store.commit('setUVIndex', { zipcode: vm.post_code, index: uv_index });
+          vm.find_uv_index();
+        }).catch(error => {
+          vm.uv_index_data = undefined;
+          DataAPI.error_handler('EPAGetUVIndex', error);
+        });
+      }
+      else {
         vm.uv_index_data = uv_index;
         vm.find_uv_index();
-      }).catch(error => {
-        vm.uv_index_data = undefined;
-        DataAPI.error_handler('EPAGetUVIndex', error);
-      });
+      }
       NWSApi.NOAAFindTideStation(this.latitude, this.longitude, 20).then(tide_stations => {
         this.tide_station = undefined;
         //We loop the results looking for the closest harmonic station.
