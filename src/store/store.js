@@ -12,9 +12,9 @@ const store = createStore({
         station_data: {},
 
         //Make a timed cache for the UV indexes. Many stations are in same zipcode, so no need to keep hitting REST request.
-        uv_index_cache: new Cache({defaultTtl: 300 * 1000}),
-        //Timed cache for data we get from observing stations. We keep it cached for 5 minutes(300 seconds * 1000 ms).
-        observing_stations_cache: new Cache({defaultTtl: 300 * 1000})
+        uv_index_cache: new Cache({defaultTtl: 600 * 1000}),
+        //Timed cache for data we get from observing stations. We keep it cached for 10 minutes(600 seconds * 1000 ms).
+        observing_stations_cache: new Cache({defaultTtl: 600 * 1000})
 
     },
 
@@ -33,14 +33,14 @@ const store = createStore({
             state.station_name = station_name;
         },
 
-        updateStationData(state, feature) {
+        /*updateStationData(state, feature) {
             try {
                 state.station_data[feature.id] = feature;
             }
             catch (e) {
                 console.error(e)
             }
-        },
+        },*/
         setUVIndex(state, data) {
             try {
                 let zipcode = data['zipcode'];

@@ -281,10 +281,22 @@
         vm.uv_index_data = uv_index;
         vm.find_uv_index();
       }
-      NWSApi.NOAAFindTideStation(this.latitude, this.longitude, 20).then(tide_stations => {
+      NWSApi.NOAAFindTideStation(this.latitude, this.longitude, 10).then(tide_stations => {
         this.tide_station = undefined;
+        let datum = "STND";
         //We loop the results looking for the closest harmonic station.
-        for(var i = 0; i < tide_stations.stationList.length; i+=1)
+        let closest_station = tide_stations.stationList[0];
+        //The R stations are harmonic stations which will have the predictions.
+        if(closest_station.stationType == 'R')
+        {
+          datum = "STND";
+        }
+        else if(closest_station.stationType == 'S')
+        {
+          datum = "MLLW";
+        }
+        vm.tide_station = closest_station;
+        /*for(var i = 0; i < tide_stations.stationList.length; i+=1)
         {
           //The R stations are harmonic stations which will have the predictions.
           if(tide_stations.stationList[i].stationType == 'R')
@@ -292,18 +304,30 @@
             vm.tide_station = tide_stations.stationList[i];
             break
           }
-        }
+        }*/
         if(this.tide_station != undefined)
         {
-          NWSApi.NOAATideQuery('today',
-              vm.tide_station.stationId,
-              'predictions',
-              'STND',
-              'lst_ldt',
-              'hilo',
-              'english').then(tide_chart_data => {
-                vm.tide_chart_data = tide_chart_data;
-          })
+          //Let's see if we have this tide station saved.
+          let tide_station_data = vm.$store.getters.getObservingStationData(vm.tide_station.stationId);
+          if(tide_station_data == undefined) {
+            NWSApi.NOAATideQuery('today',
+                vm.tide_station.stationId,
+                'predictions',
+                datum,
+                'lst_ldt',
+                'hilo',
+                'english').then(tide_chart_data => {
+              vm.tide_chart_data = tide_chart_data;
+              let data_payload = {tide_data: vm.tide_chart_data};
+              vm.$store.commit('setObservingStationData',
+                  {station: vm.tide_station.stationId, data: data_payload})
+
+            })
+          }
+          else
+          {
+            vm.tide_chart_data = tide_station_data['tide_data'];
+          }
         }
       }).catch(error => {
         vm.tide_station = '';
