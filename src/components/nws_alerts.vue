@@ -16,9 +16,9 @@
       </div>
       <div class="row">
         <div class="col-sm-12">
-          <TideChartBlock :tide_station="tide_station.stationName"
-                          :tide_station_id="tide_station.stationId"
-                          :tide_data="tide_chart_data.predictions"></TideChartBlock>
+          <TideChartBlock :p_tide_station="tide_station.stationName"
+                          :p_tide_station_id="tide_station.stationId"
+                          :p_tide_data="tide_chart_data.predictions"></TideChartBlock>
         </div>
       </div>
     </div>
