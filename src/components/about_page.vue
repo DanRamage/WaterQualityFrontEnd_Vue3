@@ -179,7 +179,7 @@
             <b-collapse id="collapse-6" class="mt-1">
               <b-card>
                 <div class="card-text text-blue avenir-font-light fs-5">
-                  Access data via the API. Reference docs can be found <a href="https://devapi.howsthebeach.org/api/v1/docs" target="_blank">here.</a>
+                  Access data via the API. Reference docs can be found <a href="https://api.howsthebeach.org/api/v1/docs" target="_blank">here.</a>
                 </div>
               </b-card>
             </b-collapse>
