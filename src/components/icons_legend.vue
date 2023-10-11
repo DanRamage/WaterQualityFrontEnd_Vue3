@@ -54,7 +54,7 @@
                       <div v-if="hasIcons('Shellcast')">
                         <li class="list-group-item">
                           <img src="@/assets/images/shellcast_marker_25x25.png" class="advisory_icon mr-1">
-                          Shellcast Forecast Sites
+                          Shellfish Harvesting Areas
                         </li>
                       </div>
                     </ul>
