@@ -48,7 +48,12 @@ This is the popup component for the ShellCast forecasts.
         },
         computed: {
           shellcast_site_link: function() {
-            return('https://ncsu-shellcast.appspot.com/');
+            if(this.feature !== undefined)
+            {
+              let site_type = this.feature.properties.site_type;
+              return(this.feature.properties[site_type].site_url);
+            }
+            return('');
           },
           shellcast_site_name: function() {
             if(this.feature !== undefined)

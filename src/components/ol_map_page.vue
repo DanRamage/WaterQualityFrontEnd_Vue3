@@ -69,13 +69,23 @@
                                                     properties: feature.properties}"
                         >
 
-                            <ol-geom-point
+                            <ol-geom-point v-if="feature.geometry.type == 'Point'"
                                 :coordinates="[
                                     feature.geometry.coordinates[0],
                                     feature.geometry.coordinates[1]
                                 ]">
                             </ol-geom-point>
-                            <ol-style :overrideStyleFunction="overrideStyleFunction"></ol-style>
+                            <ol-geom-polygon v-else-if="feature.geometry.type == 'Polygon'"
+                                             :coordinates="feature.geometry.coordinates">
+                            </ol-geom-polygon>
+
+                            <ol-style v-if="feature.geometry.type == 'Point'"
+                                      :overrideStyleFunction="overrideStyleFunction">
+                            </ol-style>
+                            <ol-style v-else-if="feature.geometry.type == 'Polygon'"
+                                      :overrideStyleFunction="polygon_style_function">
+                            </ol-style>
+
                         </ol-feature>
                     </ol-source-vector>
                 </ol-vector-layer>
@@ -87,8 +97,8 @@
                         <div>
                            <component :is="getPopupComponent(current_selected_feature)" v-bind:feature="current_selected_feature"></component>
                         </div>
-                            </ol-overlay>
-                        </ol-interaction-select>
+                    </ol-overlay>
+                </ol-interaction-select>
 
 
         </ol-map>
@@ -174,11 +184,11 @@
     import IconsLegend from "@/components/icons_legend";
 
     import Icon from 'ol/style/Icon';
-    //import GeoJSON from 'ol/format/GeoJSON';
     import Collection from 'ol/Collection';
-    //import singleClick from 'ol/events/condition';
     import Style from 'ol/style/Style';
     import {fromExtent} from 'ol/geom/Polygon';
+    import Stroke from 'ol/style/Stroke';
+    import Fill from 'ol/style/Fill'
 
     //SInce these are not in the template, we import them here. We use them in the javascript below when
     //determining which icon to use.
@@ -416,6 +426,7 @@
                 if(vm.features_styled < vm.features.length) {
                     vm.features_styled += 1;
                 }
+                let z_index = 2;
                 let icon_scale = 0.75;
                 let properties = feature.getProperties().properties;
                 let site_type = properties.site_type;
@@ -453,7 +464,7 @@
                             }
                         } else {
                             icon = new Icon({
-                                src: '@/assets/images/none_marker_25x25.png',
+                                src: vm.none_marker_icon,
                                 scale: icon_scale
                             });
                             if ('nowcasts' in properties[site_type]) {
@@ -468,6 +479,12 @@
                                         src: vm.hi_marker_icon,
                                         scale: icon_scale
                                     });
+                                } else {
+                                    icon = new Icon({
+                                      src: vm.none_marker_icon,
+                                      scale: icon_scale
+                                    });
+
                                 }
                             }
                         }
@@ -567,8 +584,31 @@
                 ];
                 icon_style;
                 style.setImage(icon);
+                style.setZIndex(z_index);
+
             },
-            dataTypeClick(data_type) {
+            polygon_style_function(feature, style)
+            {
+              console.log("polygon_style_function started.");
+              let style_color = '#FFFFFF';
+              let width = 3;
+              let z_index = 1;
+              if(feature !== undefined) {
+                let properties = feature.getProperties().properties;
+                let site_type = properties.site_type;
+                if(site_type == 'Shellcast') {
+                  style_color = '#2661AB';
+                  let fill = new Fill({color: 'rgba(38, 97, 171, 0.2)'});
+                  style.setFill(fill);
+                }
+
+              }
+              style.setZIndex(z_index);
+              let stroke = new Stroke({color: style_color, width: width});
+              style.setStroke(stroke);
+            },
+
+          dataTypeClick(data_type) {
                 console.debug("Data Type Button clicked: " + data_type);
                 if(data_type == 'nowcast')
                 {
