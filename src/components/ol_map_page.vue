@@ -49,7 +49,8 @@
             <ol-map ref="site_map"
                     style="width: 100%; height: 100%; position:absolute"
                     :loadTilesWhileAnimating="true"
-                    :loadTilesWhileInteracting="true">
+                    :loadTilesWhileInteracting="true"
+                    :controls="[]">
                 <ol-view ref="site_view"
                          :rotation="rotation"
                          projection="EPSG:4326">
@@ -68,7 +69,10 @@
                                     :properties="{  id: feature.id,
                                                     properties: feature.properties}"
                         >
-
+                            <!--
+                            We have to check the type of the geoemtry the site has. Currently we can have a Point
+                            of Polygon.
+                            -->
                             <ol-geom-point v-if="feature.geometry.type == 'Point'"
                                 :coordinates="[
                                     feature.geometry.coordinates[0],
@@ -80,7 +84,7 @@
                             </ol-geom-polygon>
 
                             <ol-style v-if="feature.geometry.type == 'Point'"
-                                      :overrideStyleFunction="overrideStyleFunction">
+                                      :overrideStyleFunction="override_style_function">
                             </ol-style>
                             <ol-style v-else-if="feature.geometry.type == 'Polygon'"
                                       :overrideStyleFunction="polygon_style_function">
@@ -100,7 +104,7 @@
                     </ol-overlay>
                 </ol-interaction-select>
 
-
+              <ol-mouseposition-control />
         </ol-map>
         <button
                 v-b-toggle.info-sidebar
@@ -421,7 +425,7 @@
 
             },
             //pointOnSurface: findPointOnSurface,
-            overrideStyleFunction(feature, style) {
+            override_style_function(feature, style) {
                 var vm = this;
                 if(vm.features_styled < vm.features.length) {
                     vm.features_styled += 1;
@@ -566,17 +570,6 @@
 
                 }
 
-                else if(site_type == 'Shellcast')
-                {
-                    icon = new Icon({
-                        src: vm.shellcast_marker_icon,
-                    });
-                    if(!(vm.legend_icons.includes('Shellcast'))) {
-                        vm.legend_icons.push('Shellcast');
-                    }
-
-                }
-
                 let icon_style = [
                     new Style({
                         image: icon,
@@ -600,8 +593,11 @@
                   style_color = '#2661AB';
                   let fill = new Fill({color: 'rgba(38, 97, 171, 0.2)'});
                   style.setFill(fill);
+                    if(!(this.legend_icons.includes('Shellcast')))
+                    {
+                      this.legend_icons.push('Shellcast');
+                    }
                 }
-
               }
               style.setZIndex(z_index);
               let stroke = new Stroke({color: style_color, width: width});
