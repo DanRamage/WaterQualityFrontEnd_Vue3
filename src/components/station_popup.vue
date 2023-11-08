@@ -4,7 +4,7 @@
       <div class="col-sm-12 mt-5">
         <div class="font-avenir fs-4">
           <div>Water Quality Site: {{ site_description }}</div>
-          <div>Site ID: {{ site_id }}</div>
+          <div>Site ID: {{ site_id_data }}</div>
         </div>
       </div>
     </div>
@@ -750,7 +750,16 @@ export default {
         if (this.feature_data !== undefined) {
           if (this.hasAdvisoryData) {
             let site_type = this.feature_data.properties.site_type;
-            let date_obj = moment(this.feature_data.properties[site_type].nowcasts.date);
+            let date_string = ""
+            //Depending on the object we have the date might be a string or in an array.
+            //One day I'll get it consistent.
+            if(typeof(this.feature_data.properties[site_type].nowcasts.date) == "string") {
+              date_string = this.feature_data.properties[site_type].nowcasts.date;
+            }
+            else {
+              date_string = this.feature_data.properties[site_type].nowcasts.date[0];
+            }
+            let date_obj = moment(date_string);
             if(date_obj.isValid()) {
               date_str = date_obj.format("MMMM Do YYYY");
             }
