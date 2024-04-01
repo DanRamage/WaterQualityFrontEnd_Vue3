@@ -205,6 +205,8 @@
     import ShellfishNoneMarkerIcon from '@/assets/images/shellfish_none_marker_25x25.png'
     import MoteMarineBeachAmbassadorIcon from '@/assets/images/mote-beach-ambassador-25x41.png'
     import ShellcastIcon from '@/assets/images/shellcast_marker_25x25.png'
+    import BeachAccessIcon from '@/assets/images/beach-access-25x25.png'
+
 
     //import { inject } from "vue";
     export default {
@@ -250,6 +252,7 @@
                 shellfish_hi_marker_icon: ShellfishHiMarkerIcon,
                 shellfish_none_marker_icon: ShellfishNoneMarkerIcon,
                 motemarine_marker_icon: MoteMarineBeachAmbassadorIcon,
+                beach_access_icon: BeachAccessIcon,
                 shellcast_marker_icon: ShellcastIcon,
             }
         },
@@ -567,6 +570,18 @@
                     if(!(vm.legend_icons.includes('Beach Ambassador'))) {
                         vm.legend_icons.push('Beach Ambassador');
                     }
+
+                }
+
+                else if(site_type == 'Beach Access') {
+                  icon = new Icon({
+                    src: vm.beach_access_icon,
+                    //Scale the icon a bit to make it less overwhelming on the map.
+                    scale: 0.8
+                  });
+                  if(!(vm.legend_icons.includes('Beach Access'))) {
+                    vm.legend_icons.push('Beach Access');
+                  }
 
                 }
 

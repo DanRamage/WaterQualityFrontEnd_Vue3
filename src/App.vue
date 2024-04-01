@@ -11,8 +11,8 @@
     import CameraGraph from "@/components/camera_graph";
     import ErrorPage from "@/components/error_page";
     import AboutPage from "@/components/about_page";
-    import MyrtleBeachAboutPage from "@/components/MyrtleBeachAbout";
     import ShellfishPage from "@/components/shellfish_page";
+    import BeachAccessPage from "@/components/beach_access_page";
 
     export default {
       data() {
@@ -23,6 +23,7 @@
       methods:
           {
             find_component: function (to) {
+                console.debug("find_component to: " + to.name);
                 if (to.name == 'OLMapPage') {
                   //Pick apart the path and save the site name into the store so other components can use it for
                   //API requests.
@@ -56,9 +57,14 @@
                 else if (to.name == 'AboutPage') {
                   this.activeComponent = 'AboutPage';
                 }
-                else if (to.name == 'MyrtleBeachAboutPage') {
-                  this.activeComponent = 'MyrtleBeachAboutPage';
+                else if (to.name == 'BeachAccessPage') {
+                  //Pick apart the path and save the site name into the store so other components can use it for
+                  //API requests.
+                  this.$store.commit('updateSiteName', to.params.location);
+                  this.$store.commit('updateStationName', to.params.site_id);
+                  this.activeComponent = 'BeachAccessPage';
                 }
+
             }
         },
         components: {OLMapPage,
@@ -69,7 +75,7 @@
           ErrorPage,
           AboutPage,
           ShellfishPage,
-          MyrtleBeachAboutPage},
+          BeachAccessPage},
         created() {
             //We check the url we receive to see where we are going, splash page or one of the project sites.
             let to = this.$route;

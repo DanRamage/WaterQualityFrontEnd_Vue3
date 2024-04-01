@@ -57,6 +57,13 @@
                           Shellfish Harvesting Areas
                         </li>
                       </div>
+                      <div v-if="hasIcons('Beach Access')">
+                        <li class="list-group-item">
+                          <img src="@/assets/images/beach-access-25x25.png" class="advisory_icon mr-1">
+                          Public Beach Access
+                        </li>
+                      </div>
+
                     </ul>
                     <b>Color Codes</b>
                     <ul class="list-group list-group-flush legend-test-size">

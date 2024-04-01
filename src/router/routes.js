@@ -6,7 +6,7 @@ import ErrorPage from '@/components/error_page'
 import AboutPage from '@/components/about_page'
 import StationPage from '@/components/station_popup'
 import ShellfishPage from '@/components/shellfish_page'
-
+import BeachAccessPage from '@/components/beach_access_page'
 import { createRouter, createWebHistory } from 'vue-router';
 export const routes = [
         {
@@ -47,7 +47,14 @@ export const routes = [
                     component: CameraGraph,
                     name: 'CameraGraph',
                     props: true
+                },
+                {
+                    path: 'beachaccess/:p_site_id',
+                    component: BeachAccessPage,
+                    name: 'BeachAccessPage',
+                    props: true
                 }
+
 
             ]
 
