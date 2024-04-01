@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <div class="font-avenir fs-5">
-          <div>Beach Access Site: {{ site_description }}</div>
+          <div>Public Beach Access</div>
           <div>Site ID: {{ site_id }}</div>
         </div>
       </div>
@@ -15,29 +15,35 @@
                          :p_site_feature="site_feature"></SingleSiteMap>
 
       </div>
-      <div class="col-sm-4 ml-4 fs-6">
-        <p>
-          Public Beach Access
-        </p>
+      <div class="col-sm-9 ml-4 fs-6">
         <div>
           Site: {{ site_id }}
         </div>
+        <div>
+          <h4>Ameneties</h4>
+        </div>
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-sm-3">
             Parking: {{public_parking}}
           </div>
-          <div v-if="public_parking == 'Yes'">
-            <div class = "col-sm-6">
+          <div class="col-sm-4">
+            <div v-if="public_parking == 'Yes'">
               ADA Parking: {{ada_parking}}
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-sm-3">
             Restrooms: {{restrooms}}
+          </div>
+          <div class="col-sm-4">
+            Showers: {{showers}}
           </div>
 
         </div>
+        <div class="row">
+        </div>
+
       </div>
     </div>
     <div class="row gy-0">
@@ -179,6 +185,18 @@ export default {
 
     onClose() {
     },
+    get_site_property(feature, property) {
+      if (feature !== undefined) {
+        let site_type = feature.properties.site_type;
+        if (site_type in feature.properties) {
+          let site_specific_property = feature.properties[site_type];
+          if(property in site_specific_property) {
+            return site_specific_property[property]
+          }
+        }
+      }
+      return ("");
+    }
   },
   watch: {},
   computed: {
@@ -240,28 +258,16 @@ export default {
       return ("");
     },
     public_parking: function () {
-      if (this.internal_feature !== undefined) {
-        let site_type = this.internal_feature.properties.site_type;
-        let site_specific = this.internal_feature.properties[site_type];
-        return site_specific.parking;
-      }
-      return ("");
+      return this.get_site_property(this.internal_feature, 'parking');
     },
     ada_parking: function () {
-      if (this.internal_feature !== undefined) {
-        let site_type = this.internal_feature.properties.site_type;
-        let site_specific = this.internal_feature.properties[site_type];
-        return site_specific.ada_parking;
-      }
-      return ("");
+      return this.get_site_property(this.internal_feature, 'ada_parking');
     },
     restrooms: function () {
-      if (this.internal_feature !== undefined) {
-        let site_type = this.internal_feature.properties.site_type;
-        let site_specific = this.internal_feature.properties[site_type];
-        return site_specific.restrooms;
-      }
-      return ("");
+      return this.get_site_property(this.internal_feature, 'restrooms');
+    },
+    showers: function () {
+      return this.get_site_property(this.internal_feature, 'showers');
     },
     region_name: function() {
       if(this.internal_feature !== undefined) {
