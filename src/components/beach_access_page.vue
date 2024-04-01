@@ -17,12 +17,26 @@
       </div>
       <div class="col-sm-4 ml-4 fs-6">
         <p>
-          {{ collection_program_description }}
+          Public Beach Access
         </p>
         <div>
-          Site: site_description
+          Site: {{ site_id }}
         </div>
         <div class="row">
+          <div class="col-sm-6">
+            Parking: {{public_parking}}
+          </div>
+          <div v-if="public_parking == 'Yes'">
+            <div class = "col-sm-6">
+              ADA Parking: {{ada_parking}}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            Restrooms: {{restrooms}}
+          </div>
+
         </div>
       </div>
     </div>
@@ -39,7 +53,7 @@
         <div v-if="site_feature.length">
           <NWSAlerts :latitude="site_latitude"
                      :longitude="site_longitude"
-                      :post_code="site_post_code">
+                      :p_post_code="site_post_code">
 
           </NWSAlerts>
         </div>
@@ -225,29 +239,31 @@ export default {
       }
       return ("");
     },
-    collection_program_name: function () {
-      let name = '';
-      if (this.collection_program_info !== undefined) {
-        name = this.collection_program_info.program_name;
+    public_parking: function () {
+      if (this.internal_feature !== undefined) {
+        let site_type = this.internal_feature.properties.site_type;
+        let site_specific = this.internal_feature.properties[site_type];
+        return site_specific.parking;
       }
-      return(name);
+      return ("");
     },
-    collection_program_description: function() {
-      let desc = '';
-      if (this.collection_program_info !== undefined) {
-        desc = this.collection_program_info.description;
+    ada_parking: function () {
+      if (this.internal_feature !== undefined) {
+        let site_type = this.internal_feature.properties.site_type;
+        let site_specific = this.internal_feature.properties[site_type];
+        return site_specific.ada_parking;
       }
-      return(desc);
+      return ("");
     },
-    collection_program_url: function() {
-      let url = '';
-      if (this.collection_program_info !== undefined) {
-        url = this.collection_program_info.url;
+    restrooms: function () {
+      if (this.internal_feature !== undefined) {
+        let site_type = this.internal_feature.properties.site_type;
+        let site_specific = this.internal_feature.properties[site_type];
+        return site_specific.restrooms;
       }
-      return(url);
+      return ("");
     },
     region_name: function() {
-      console.debug("regionName started.");
       if(this.internal_feature !== undefined) {
         let site_type = this.internal_feature.properties.site_type;
         if (site_type in this.internal_feature.properties) {
