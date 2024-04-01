@@ -61,7 +61,7 @@
                   //Pick apart the path and save the site name into the store so other components can use it for
                   //API requests.
                   this.$store.commit('updateSiteName', to.params.location);
-                  this.$store.commit('updateStationName', to.params.site_id);
+                  this.$store.commit('updateStationName', to.params.p_site_id);
                   this.activeComponent = 'BeachAccessPage';
                 }
 
@@ -88,7 +88,7 @@
         },
         watch: {
             '$route' (to, from) {
-                console.debug('Route changed from ' + from.path + ' to ' + to.path);
+                console.info('Route changed from ' + from.path + ' to ' + to.path);
                 this.$gtag.pageview({
                     page_path: to.path,
                 });

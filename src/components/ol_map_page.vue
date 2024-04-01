@@ -687,8 +687,19 @@
                                 p_program_type: "Shellfish Monitoring"
                             }
                         });
-
                     }
+                    else if (feature.properties.site_type == "Beach Access") {
+                      EventUtils.log_event(this.$gtag, 'click', 'Shellfish Station', feature.properties.description, 0);
+                      this.$router.push({
+                        name: 'BeachAccessPage',
+                        params: {
+                          p_site_name: feature.properties.description,
+                          p_site_id: feature.id,
+                          p_program_type: "Public Beach Access"
+                        }
+                      });
+                    }
+
                     else if (feature.properties.site_type == "Beach Ambassador") {
                         return (BCRSPopup);
                     }
