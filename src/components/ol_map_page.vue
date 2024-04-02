@@ -443,6 +443,7 @@
                 });
                 if(site_type == 'Water Quality')
                 {
+                    z_index = 10;
                     try
                     {
                         if (vm.advisoryActive) {
@@ -469,7 +470,8 @@
                             } else {
                                 console.debug("Feature: " + feature.getId() + " No advisory data found.");
                             }
-                        } else {
+                        }
+                        else {
                             icon = new Icon({
                                 src: vm.none_marker_icon,
                                 scale: icon_scale
@@ -495,6 +497,7 @@
                                 }
                             }
                         }
+
                     }
                     catch(error)
                     {
@@ -508,6 +511,7 @@
                     if (!(vm.legend_icons.includes('Water Quality'))) {
                         vm.legend_icons.push("Water Quality");
                     }
+
                 }
                 else if(site_type == 'Shellfish')
                 {
@@ -574,6 +578,8 @@
                 }
 
                 else if(site_type == 'Beach Access') {
+                  z_index = 1;
+
                   icon = new Icon({
                     src: vm.beach_access_icon,
                     //Scale the icon a bit to make it less overwhelming on the map.
