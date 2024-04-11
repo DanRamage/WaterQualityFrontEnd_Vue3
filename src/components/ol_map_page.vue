@@ -695,7 +695,7 @@
                         });
                     }
                     else if (feature.properties.site_type == "Beach Access") {
-                      EventUtils.log_event(this.$gtag, 'click', 'Shellfish Station', feature.properties.description, 0);
+                      EventUtils.log_event(this.$gtag, 'click', 'Beach Access', feature.properties.description, 0);
                       this.$router.push({
                         name: 'BeachAccessPage',
                         params: {
