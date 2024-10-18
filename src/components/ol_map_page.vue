@@ -183,6 +183,7 @@
     import BCRSPopup from "./bcrs_popup";
     import ShellcastPopup from "./shellcast_popup";
     import CameraPopupBasic from "@/components/camera_popup_basic";
+    import GeneralPopupBasic from "@/components/general_popup";
     import EventUtils from "../utilities/analytics_funcs";
 
     import IconsLegend from "@/components/icons_legend";
@@ -682,6 +683,9 @@
                     }
                     else if (feature.properties.site_type == "Camera Site") {
                         return (CameraPopupBasic);
+                    }
+                    else if(feature.properties.site_type == "General Popup Site") {
+                      return (GeneralPopupBasic);
                     }
                 }
             }
