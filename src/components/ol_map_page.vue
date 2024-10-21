@@ -568,8 +568,22 @@
                     if(!(vm.legend_icons.includes('Beach Ambassador'))) {
                         vm.legend_icons.push('Beach Ambassador');
                     }
+                }
+                else if(site_type == 'General Popup Site') {
+                  var site_properties = properties[site_type];
+
+                  var map_icon = site_properties['map_icon'];
+                  var map_icon_url = window.location.origin + '/' + map_icon;
+                  icon = new Icon({
+                    src: map_icon_url,
+                    scale: icon_scale
+                  });
+                  /*if(!(vm.legend_icons.includes('Camera Site'))) {
+                    vm.legend_icons.push('Camera Site');
+                  }*/
 
                 }
+
 
                 let icon_style = [
                     new Style({
