@@ -30,32 +30,37 @@
                 </div>
               </b-nav-item>
               <b-nav-item to="/radioisland/map" exact exact-active-class="active">
-                <div class="text-white text-center" @mouseover="site_btn_hover($event, 0)">
+                <div class="text-white text-center" @mouseover="site_btn_hover($event, 1)">
                   <span class="montserat-font">RADIO ISLAND</span><br><span class="avenir-font-oblique">North Carolina</span>
                 </div>
               </b-nav-item>
               <b-nav-item to="/myrtlebeach/map" exact exact-active-class="active">
-                <div class="text-white text-center" @mouseover="site_btn_hover($event, 1)">
+                <div class="text-white text-center" @mouseover="site_btn_hover($event, 2)">
                   <span class="montserat-font">MYRTLE BEACH</span><br><span class="avenir-font-oblique">South Carolina</span>
                 </div>
               </b-nav-item>
               <b-nav-item to="/surfside/map" exact exact-active-class="active">
-                <div class="text-white text-center" @mouseover="site_btn_hover($event, 2)">
+                <div class="text-white text-center" @mouseover="site_btn_hover($event, 3)">
                   <span class="montserat-font">SURFSIDE</span><br><span class="avenir-font-oblique">South Carolina</span>
                 </div>
               </b-nav-item>
+              <b-nav-item to="/murrellsinlet/map" exact exact-active-class="active">
+                <div class="text-white text-center" @mouseover="site_btn_hover($event, 4)">
+                  <span class="montserat-font">MURRELLS INLET</span><br><span class="avenir-font-oblique">South Carolina</span>
+                </div>
+              </b-nav-item>
               <b-nav-item to="/charleston/map" exact exact-active-class="active">
-                <div class="text-white text-center" @mouseover="site_btn_hover($event, 3)">
+                <div class="text-white text-center" @mouseover="site_btn_hover($event, 5)">
                   <span class="montserat-font">CHARLESTON HARBOR</span><br><span class="avenir-font-oblique">South Carolina</span>
                 </div>
               </b-nav-item>
               <b-nav-item to="/follybeach/map" exact exact-active-class="active">
-                <div class="text-white text-center" @mouseover="site_btn_hover($event, 4)">
+                <div class="text-white text-center" @mouseover="site_btn_hover($event, 6)">
                   <span class="montserat-font">FOLLY BEACH</span><br><span class="avenir-font-oblique">South Carolina</span>
                 </div>
               </b-nav-item>
               <b-nav-item to="/sarasota/map" exact exact-active-class="active">
-                <div class="text-white text-center" @mouseover="site_btn_hover($event, 5)">
+                <div class="text-white text-center" @mouseover="site_btn_hover($event, 7)">
                   <span class="montserat-font">SARASOTA</span><br><span class="avenir-font-oblique">Florida</span>
                 </div>
               </b-nav-item>
@@ -120,6 +125,18 @@
                         class="d-block w-100"
                         height="400"
                         src="@/assets/images/surfside.jpg"
+                >
+              </template>
+            </b-carousel-slide>
+            <b-carousel-slide
+                caption="Murrells Inlet"
+                text="South Carolina"
+            >
+              <template v-slot:img>
+                <img
+                    class="d-block w-100"
+                    height="400"
+                    src="@/assets/images/MI_Boardwalk.jpg"
                 >
               </template>
             </b-carousel-slide>
