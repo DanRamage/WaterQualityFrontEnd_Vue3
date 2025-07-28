@@ -103,8 +103,9 @@
                         </div>
                     </ol-overlay>
                 </ol-interaction-select>
-
+              <!--
               <ol-mouseposition-control />
+              -->
         </ol-map>
         <button
                 v-b-toggle.info-sidebar
